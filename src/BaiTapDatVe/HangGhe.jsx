@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-
-export default class HangGhe extends Component {
-
+import {connect} from 'react-redux'
+import { datGhe } from '../ReDux/reducer/datGheReducer'
+ class HangGhe extends Component {
+    
     renderGhe =()=>{
         return this.props.hangGhe.danhSachGhe.map((ghe,index)=>{
 
@@ -15,7 +16,18 @@ export default class HangGhe extends Component {
                 cssGheDaDat="gheDuocChon"
                 disabled = true
             }
-            return <button disabled={disabled} className={`ghe ${cssGheDaDat}` } key={index}>
+
+            let cssGheDangChon =""
+            let indexGheDangChon = this.props.danhSachGheDangDat.findIndex(gheDangDat=>gheDangDat.soGhe === ghe.soGhe)
+
+            if(indexGheDangChon !== -1){
+                cssGheDangChon = "gheDangChon"
+            }
+
+            return <button disabled={disabled} className={`ghe ${cssGheDaDat} ${cssGheDangChon}` } key={index} onClick={()=>{
+                const action = datGhe(ghe)
+                this.props.dispatch(action)
+            }}>
                 {ghe.soGhe}
             </button>
         })
@@ -44,6 +56,7 @@ export default class HangGhe extends Component {
     }
 
   render() {
+   
     return (
       <div className='text-warning text-start ms-5  ' style={{fontSize:"30px"}}>
         {this.renderHangGhe()}
@@ -51,3 +64,11 @@ export default class HangGhe extends Component {
     )
   }
 }
+
+
+const mapStateToProp = state =>{
+    return {
+        danhSachGheDangDat:state.datGheReducer.danhSachGheDangDat
+    }
+}
+export default connect (mapStateToProp)(HangGhe)

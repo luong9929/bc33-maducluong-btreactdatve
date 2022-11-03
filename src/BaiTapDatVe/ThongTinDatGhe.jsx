@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-
-export default class ThongTinDatGhe extends Component {
+import {connect} from 'react-redux'
+import { huyGhe } from '../ReDux/reducer/datGheReducer'
+ class ThongTinDatGhe extends Component {
   render() {
     return (
         <div>
@@ -22,14 +23,25 @@ export default class ThongTinDatGhe extends Component {
                     </tr>
                 </thead>
                 <tbody className='text-warning text-center'>
-               
+                {this.props.danhSachGheDangDat.map((gheDangDat, index) => {
+                                return <tr key={index} >
+                                        <td>{gheDangDat.soGhe}</td>
+                                        <td>{gheDangDat.gia.toLocaleString()}</td>
+                                        <td><button className='btn btn-danger' onClick={() => {
+                                            const action = huyGhe(gheDangDat.soGhe)
+                                              this.props.dispatch(action);
+                                        }}>Hủy</button></td>
+                                </tr>
+                            })}
                 </tbody>
                 <tfoot className='text-success text-center fs-5 fw-bold'>
                     <tr>
                        
                         <td className='text-white'>Tổng tiền</td>
                         <td className='text-warning'>
-                        
+                        {this.props.danhSachGheDangDat.reduce((tongTien, gheDangDat, index) => {
+                                        return tongTien += gheDangDat.gia;
+                                    },0).toLocaleString()}
                         </td>
                         <td></td>
                     </tr>
@@ -41,3 +53,9 @@ export default class ThongTinDatGhe extends Component {
     )
   }
 }
+const mapStateToProp = state =>{
+    return {
+        danhSachGheDangDat:state.datGheReducer.danhSachGheDangDat
+    }
+}
+export default connect (mapStateToProp)(ThongTinDatGhe)
